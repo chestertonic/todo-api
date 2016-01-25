@@ -12,6 +12,7 @@ app.use(bodyParser.json());
 app.get('/', function(req, res) {
   res.send('Todo API Root');
 });
+
 // GET /todos?completed=true
 app.get('/todos', function(req, res) {
   var queryParams = req.query;
@@ -23,12 +24,15 @@ app.get('/todos', function(req, res) {
     filterdTodos = _.where(filterdTodos, { completed: false });
   }
 
+  if (queryParams.hasOwnProperty('q') && queryParams.q.length > 0) {
+    filterdTodos = _.filter(filterdTodos, function (todo) {
+      return todo.description.toLowerCase().indexOf(queryParams.q) > -1;
+    });
+  }
+
   res.json(filterdTodos);
 });
-// GET /todos
-//app.get('/todos', function(req, res) {
-//  res.json(todos);
-//});
+
 // GET /todos/:id
 app.get('/todos/:id', function(req, res) {
   var todoId = parseInt(req.params.id, 10);
