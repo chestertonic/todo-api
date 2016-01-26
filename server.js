@@ -70,18 +70,40 @@ app.post('/todos', function(req, res) {
 
 app.delete('/todos/:id', function(req, res) {
   var todoId = parseInt(req.params.id, 10);
-  var matchedTodo = _.findWhere(todos, {
-    id: todoId
+
+/*  db.todo.findById(todoId).then(function(todo) {
+    if (!!todo) {
+      return todo.destroy();
+    } else {
+      res.status(404).send();
+    }
+  }, function(e) {
+    res.status(500).send();
+  }).then(function(result) {
+    if (result !== 'undefined') {
+      res.json(result.toJSON());
+    } else {
+      console.log('Instance not found, cannot parse to JSON')
+    }
+  }).catch(function(e) {
+    console.log(e);
+  });*/
+  db.todo.destroy({
+    where: {
+      id: todoId
+    }
+  }).then(function(result) {
+    if (result === 0) {
+      res.status(404).json({
+        error: 'No todo with id'
+      });
+    } else {
+      res.status(204).send();
+    }
+  }, function() {
+    res.status(500).send();
   });
 
-  if (!matchedTodo) {
-    res.status(404).json({
-      "error": "no todo item with given id"
-    });
-  } else {
-    todos = _.without(todos, matchedTodo);
-    res.json(matchedTodo);
-  }
 });
 
 // PUT /todos/:id
