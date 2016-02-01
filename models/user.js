@@ -15,7 +15,6 @@ module.exports = function(sequelize, DataTypes) {
     },
     salt: {
       type: DataTypes.STRING
-
     },
     password_hash: {
       type: DataTypes.STRING
